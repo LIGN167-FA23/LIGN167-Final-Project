@@ -1,39 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ChatGPT Web App</title>
-</head>
-<body>
-    <h1>Chat with GPT</h1>
-    <form id="chat-form">
-        <textarea name="user_input" rows="4" cols="50" placeholder="Type your message here..."></textarea>
-        <br>
-        <input type="submit" value="Send">
-    </form>
-
-
-    <h2>Response:</h2>
-    <p id="gpt_response"></p>
-
-    <script>
-        document.getElementById('chat-form').onsubmit = async function(e) {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const plainFormData = Object.fromEntries(formData.entries());
-	        const formDataJsonString = JSON.stringify(plainFormData);
-            for (let [key, value] of formData.entries()) { 
-                console.log(key, value);
-            }
-            const response = await fetch('/get_response', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: formDataJsonString
-            });
-            document.getElementById('gpt_response').innerText = await response.text();
-        };
-    </script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+    <script type="module" crossorigin src="/assets/index-D_F0c8Sr.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-T74ItOsL.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
