@@ -1,0 +1,26 @@
+# Logs
+my-react-app/logs
+my-react-app/*.log
+my-react-app/npm-debug.log*
+my-react-app/yarn-debug.log*
+my-react-app/yarn-error.log*
+my-react-app/pnpm-debug.log*
+my-react-app/lerna-debug.log*
+
+app/node_modules
+my-react-app/node_modules
+my-react-app/dist
+my-react-app/dist-ssr
+my-react-app/*.local
+app/.env
+
+# Editor directories and files
+my-react-app/.vscode/*
+my-react-app/!.vscode/extensions.json
+my-react-app/.idea
+my-react-app/.DS_Store
+my-react-app/*.suo
+my-react-app/*.ntvs*
+my-react-app/*.njsproj
+my-react-app/*.sln
+my-react-app/*.sw?
