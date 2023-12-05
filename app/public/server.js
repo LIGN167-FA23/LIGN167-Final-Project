@@ -20,7 +20,7 @@ app.post('/get_response', async (req, res) => {
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4",
-            max_tokens: 150,
+            max_tokens: 300,
             messages: [{role: "user", content: user_input}]
           })
         const gptResponse = response.choices[0].message.content
