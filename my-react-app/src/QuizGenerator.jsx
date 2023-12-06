@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './QuizGenerator.css';
 
 function QuizGenerator() {
   const [topic, setTopic] = useState('Random');
@@ -41,7 +42,7 @@ function QuizGenerator() {
   return (
     <div className="quiz-generator">
       <h1>AI Quiz Generator</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className='quiz-form'>
         {/* Topic Selection */}
         <label>
           Topic:

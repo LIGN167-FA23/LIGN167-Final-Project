@@ -1,0 +1,49 @@
+.quiz-generator {
+    background-color: white; /* White background */
+    color: #4b3f72; /* Dark purple text */
+    font-family: 'Arial', sans-serif; /* Modern font */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #9b51e0; /* Brighter purple for headings */
+}
+
+.quiz-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #4b3f72; /* Dark purple border */
+    background-color: #f7f7f7; /* Light grey background */
+    color: #4b3f72;
+}
+
+button {
+    background-color: #9b51e0; /* Bright purple button */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #8134af; /* Darker purple on hover */
+}

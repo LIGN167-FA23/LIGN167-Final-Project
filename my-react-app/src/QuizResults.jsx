@@ -51,21 +51,20 @@ function QuizResults() {
     <div className="quiz-results">
       <h1>Quiz Results</h1>
       {questions.map((question, questionIndex) => (
-        <div key={questionIndex} className="question">
+        <div key={questionIndex} className="question-container">
           <h3>Question {questionIndex + 1}: {question.query}</h3>
-          <ul>
+          <div className="options-container">
             {question.choices.map((choice, choiceIndex) => (
-              <li key={choiceIndex}>
-                <button
-                  className={`choice ${selectedAnswers[questionIndex] === choiceIndex ? 'selected' : ''}`}
-                  onClick={() => handleChoiceSelect(questionIndex, choiceIndex)}
-                  disabled={isAnswerSubmitted(questionIndex)}
-                >
-                  {choice}
-                </button>
-              </li>
+              <button
+                key={choiceIndex}
+                className={`option-button ${selectedAnswers[questionIndex] === choiceIndex ? 'selected' : ''}`}
+                onClick={() => handleChoiceSelect(questionIndex, choiceIndex)}
+                disabled={isAnswerSubmitted(questionIndex)}
+              >
+                {choice}
+              </button>
             ))}
-          </ul>
+          </div>
           {!isAnswerSubmitted(questionIndex) && (
             <button onClick={() => handleSubmitAnswer(questionIndex)}>
               Submit Answer
