@@ -18,6 +18,8 @@ function QuizResults() {
         });
     };
 
+    const allQuestionsAnswered = Object.keys(submittedAnswers).length === questions.length;
+
     const handleSubmitAnswer = (questionIndex) => {
         const newSubmittedAnswers = {
         ...submittedAnswers,
@@ -269,8 +271,12 @@ function QuizResults() {
             <h2>Your Score: {score} out of {quizData.questions.length}</h2>
         </div>
         )}
-        <button onClick={goBack}>Go Back to Quiz Generator</button>
-        <button onClick={downloadStatsHtml}>Download Stats</button>
+        <div className="button-group">
+                <button onClick={goBack}>Go Back to Quiz Generator</button>
+                {allQuestionsAnswered && (
+                    <button onClick={downloadStatsHtml}>Download Stats</button>
+                )}
+            </div>
         </div>
     );
 }
