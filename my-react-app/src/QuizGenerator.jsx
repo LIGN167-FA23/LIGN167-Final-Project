@@ -36,6 +36,8 @@ function QuizGenerator() {
     const [hoveredTopic, setHoveredTopic] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [username, setUsername] = useState('');
+    const [quizTitle, setQuizTitle] = useState('LIGN 101 QUIZ');
 
     // Function to handle file input change
     const handleFileChange = (event) => {
@@ -119,6 +121,30 @@ function QuizGenerator() {
     return (
         <div className="quiz-generator">
         <h1>LIGN 101 Quiz Generator</h1>
+        {/* Username Input */}
+        <label className="username-label">
+            Username:
+            <input 
+                type="text" 
+                value={username} 
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                className="username-input"
+            />
+        </label>
+
+        {/* Quiz Title Input */}
+        <label className="quiz-title-label">
+            Quiz Title:
+            <input 
+                type="text" 
+                value={quizTitle} 
+                onChange={(e) => setQuizTitle(e.target.value)}
+                placeholder="Enter quiz title"
+                className="quiz-title-input"
+            />
+        </label>
+
         <form onSubmit={handleSubmit} className='quiz-form'>
 
             {/* Generate Topic Headers and Difficulty Squares */}
