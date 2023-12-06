@@ -7,6 +7,7 @@ function QuizResults() {
     const navigate = useNavigate();
     const { quizData } = location.state || { quizData: { questions: [] } };
     const questions = quizData.questions || [];
+    const stats = htmlContent;
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [submittedAnswers, setSubmittedAnswers] = useState({});
     const [score, setScore] = useState(null);

@@ -4,8 +4,11 @@ import './QuizGenerator.css';
 
 function QuizGenerator() {
 
-    // idk why it's state 5, but it works
+    // starts at 5 questions
     const [numQuestions, setNumQuestions] = useState(5);
+
+    // transfers html to next page
+    const [htmlContent, setHtmlContent] = useState('');
 
     // dictionaries of topic counts
     const [difficulties, setDifficulties] = useState({
@@ -38,13 +41,11 @@ function QuizGenerator() {
         const file = event.target.files[0];
         if (file && file.type === "text/html") {
             setUploadedFile(file);
-
             const reader = new FileReader();
-            reader.readAsText(file)
-            
-            reader.onload = function() {
-                console.log(reader.result)
-            }
+            reader.onload = function(event) {
+                setHtmlContent(event.target.result);
+            };
+            reader.readAsText(file);
         // You can add further handling here if needed
         } else {
         // Handle invalid file type
@@ -105,7 +106,7 @@ function QuizGenerator() {
         try {
             const response = await fetch(serverUrl, requestOptions);
             const data = await response.json();
-            navigate('/results', { state: { quizData: data } }); // Navigate to results page with quiz data
+            navigate('/results', { state: { quizData: data, htmlContent: htmlContent } }); // Navigate to results page with quiz data and html
         } catch (error) {
             console.error("Failed to fetch quiz data: ", error);
         }
