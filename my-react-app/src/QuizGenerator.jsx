@@ -187,17 +187,19 @@ function QuizGenerator() {
                 />
             </label>
 
-            {/* Submit Button */}
             <div className="button-container">
+                {/* Submit Button */}
                 <button type="submit" className="generate-quiz-button" disabled={isLoading}>
                     {isLoading ? 'Loading...' : 'Generate Quiz'}
                 </button>
-                <label className="upload-button">
+                {/* Upload Button */}
+                <label className={`upload-button ${isLoading ? 'disabled' : ''}`}>
                     📁
                     <input 
                     type="file" 
                     onChange={handleFileChange} 
                     accept="text/html"
+                    disabled={isLoading}
                     style={{ display: "none" }} 
                     />
                 </label>

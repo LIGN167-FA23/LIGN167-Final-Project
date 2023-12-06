@@ -246,6 +246,12 @@ h2 {
     display: none;
 }
 
+.upload-button.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    /* Other styles to indicate disabled state */
+}
+
 .question-container {
     background-color: white; /* Dark blue background for the question */
     padding: 20px;
