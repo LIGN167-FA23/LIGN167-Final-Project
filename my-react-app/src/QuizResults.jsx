@@ -51,7 +51,7 @@ const isAnswerSubmitted = (questionIndex) => {
 return (
     <div className="quiz-results">
         <div className="score-container">
-            <h1>LIGN 101 Quiz</h1>
+            <h2>LIGN 101 Quiz</h2>
         </div>
     {questions.map((question, questionIndex) => (
         <div key={questionIndex} className="question-container">

@@ -60,36 +60,88 @@ button:hover {
 }
 
 .slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 15px;
-    background: #ddd;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-    border-radius: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 15px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 5px;
 }
 
 .slider:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 25px;
-    height: 25px;
-    background: #4b3f72;
-    cursor: pointer;
-    border-radius: 50%;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4b3f72;
+  cursor: pointer;
+  border-radius: 50%;
 }
 
 .slider::-moz-range-thumb {
-    width: 25px;
-    height: 25px;
-    background: #4b3f72;
+  width: 25px;
+  height: 25px;
+  background: #4b3f72;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.topic-difficulty {
+    display: flex;
+    align-items: center;
+}
+
+h2 {
+    margin-right: 10px;
+}
+
+.difficulty-squares {
+    display: flex;
+}
+
+.difficulty-square {
+    margin: 5px;
+    padding: 10px;
+    background-color: #ddd;
+    border: 1px solid #ccc;
     cursor: pointer;
-    border-radius: 50%;
+}
+
+.difficulty-square.selected {
+    background-color: #9b51e0;
+    color: white;
+}
+
+.topic-label {
+    font-size: 16px; /* Adjust the size to match your question text size */
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.difficulty-squares {
+    display: flex;
+}
+
+.difficulty-square {
+    margin: 5px;
+    padding: 10px;
+    background-color: #ddd;
+    color: #4b3f72; /* Dark purple text */
+    border: 1px solid #ccc;
+    cursor: pointer;
+    width: 50px; /* Fixed width for square appearance */
+    text-align: center; /* Center text in the square */
+}
+
+.difficulty-square.selected {
+    background-color: #9b51e0;
+    color: white;
 }

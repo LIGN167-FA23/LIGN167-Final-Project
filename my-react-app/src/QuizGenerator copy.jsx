@@ -3,27 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import './QuizGenerator.css';
 
 function QuizGenerator() {
+  const [topic, setTopic] = useState('Random');
+  const [difficulty, setDifficulty] = useState('Beginner');
   const [numQuestions, setNumQuestions] = useState(5);
   const navigate = useNavigate();
 
-  const [difficulties, setDifficulties] = useState({
-    topic1: 1,
-    topic2: 1,
-    topic3: 1,
-    topic4: 1,
-    topic5: 1,
-    topic6: 1,
-    topic7: 1,
-    topic8: 1,
-  });
+  const topicsOptions = ['Random', 'HTML', 'CSS', 'JavaScript', 'React'];
+  const difficultyOptions = ['Beginner', 'Intermediate', 'Advanced'];
 
-  const handleDifficultyChange = (topic, difficulty) => {
-    setDifficulties(prevDifficulties => ({
-      ...prevDifficulties,
-      [topic]: difficulty
-    }));
-  };
-    
   const handleSubmit = async (event) => {
     event.preventDefault();
     const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001/generate-quiz';
@@ -52,36 +39,42 @@ function QuizGenerator() {
 
   return (
     <div className="quiz-generator">
-      <h1>LIGN 101 Quiz Generator</h1>
+      <h1>AI Quiz Generator</h1>
       <form onSubmit={handleSubmit} className='quiz-form'>
-        {/* Generate Topic Headers and Difficulty Squares */}
-        {Array.from({ length: 8 }, (_, i) => `topic${i + 1}`).map((topic) => (
-          <div key={topic} className="topic-difficulty">
-            <label className="topic-label">{`Topic ${topic.slice(-1)}`}</label>
-            <div className="difficulty-squares">
-              {Array.from({ length: 5 }, (_, i) => i + 1).map((difficulty) => (
-                <button
-                  key={difficulty}
-                  className={`difficulty-square ${difficulties[topic] === difficulty ? 'selected' : ''}`}
-                  onClick={() => handleDifficultyChange(topic, difficulty)}
-                >
-                  {difficulty}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
+        {/* Topic Selection */}
+        <label>
+          Topic:
+          <select value={topic} onChange={(e) => setTopic(e.target.value)}>
+            {topicsOptions.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {/* Difficulty Selection */}
+        <label>
+          Difficulty:
+          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+            {difficultyOptions.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </label>
 
         {/* Number of Questions Selection */}
         <label>
-          Questions: {numQuestions}
+          Questions: {numQuestions} {/* Display the current value next to the slider */}
           <input 
             type="range" 
             min="5" 
             max="20" 
             value={numQuestions} 
             onChange={(e) => setNumQuestions(e.target.value)}
-            className="slider"
+            className="slider" // You can style this class in your CSS
           />
         </label>
 
