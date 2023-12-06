@@ -1,4 +1,9 @@
-/* Additional CSS for the Submit Answer button */
+body {
+    background-color: #2c2c54;
+}
+
+/*
+Additional CSS for the Submit Answer button
 button {
   padding: 10px;
   margin: 5px;
@@ -23,6 +28,7 @@ button.selected {
 }
 
 /* Correctness feedback styling */
+/*
 .correct {
   color: #0f9d58;
 }
@@ -42,3 +48,4 @@ button.selected {
 .score h2 {
   color: #76e2b3;
 }
+*/

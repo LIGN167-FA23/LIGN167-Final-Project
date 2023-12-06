@@ -1,3 +1,14 @@
+body {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    min-height: 100vh; /* Minimum height of the viewport */
+    margin: 0; /* Remove default margin */
+    background-color: #2c2c54; /* Your desired background color */
+    color: white;
+    font-family: 'Arial', sans-serif;
+}
+
 .quiz-generator {
     background-color: white; /* White background */
     color: #4b3f72; /* Dark purple text */
@@ -6,7 +17,7 @@
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     max-width: 600px;
-    margin: auto;
+    /* Remove margin auto if using flex to center */
 }
 
 h1 {
