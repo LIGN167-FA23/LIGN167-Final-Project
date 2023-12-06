@@ -35,6 +35,7 @@ function QuizGenerator() {
 
     const [hoveredTopic, setHoveredTopic] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Function to handle file input change
     const handleFileChange = (event) => {
@@ -68,6 +69,7 @@ function QuizGenerator() {
     
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true); // Start loading
         const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001/generate-quiz';
 
         // Construct an object with each topic's difficulty
@@ -109,6 +111,8 @@ function QuizGenerator() {
             navigate('/results', { state: { quizData: data, htmlContent: htmlContent } }); // Navigate to results page with quiz data and html
         } catch (error) {
             console.error("Failed to fetch quiz data: ", error);
+        } finally {
+            setIsLoading(false); // Stop loading regardless of success or failure
         }
     };
 
@@ -159,7 +163,9 @@ function QuizGenerator() {
 
             {/* Submit Button */}
             <div className="button-container">
-                <button type="submit" className="generate-quiz-button">Generate Quiz</button>
+                <button type="submit" className="generate-quiz-button" disabled={isLoading}>
+                    {isLoading ? 'Loading...' : 'Generate Quiz'}
+                </button>
                 <label className="upload-button">
                     📁
                     <input 
