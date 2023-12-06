@@ -36,13 +36,19 @@ function QuizGenerator() {
     // Function to handle file input change
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        if (file && file.type === "application/pdf") {
-        setUploadedFile(file);
-        console.log(uploadedFile)
+        if (file && file.type === "text/html") {
+            setUploadedFile(file);
+
+            const reader = new FileReader();
+            reader.readAsText(file)
+            
+            reader.onload = function() {
+                console.log(reader.result)
+            }
         // You can add further handling here if needed
         } else {
         // Handle invalid file type
-        alert("Please upload a PDF file.");
+        alert("Please upload an HTML file.");
         }
     };
 
@@ -154,7 +160,7 @@ function QuizGenerator() {
                     <input 
                     type="file" 
                     onChange={handleFileChange} 
-                    accept="application/pdf"
+                    accept="text/html"
                     style={{ display: "none" }} 
                     />
                 </label>
