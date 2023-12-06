@@ -50,7 +50,9 @@ const isAnswerSubmitted = (questionIndex) => {
 
 return (
     <div className="quiz-results">
-    <h1>Quiz Results</h1>
+        <div className="score-container">
+            <h1>LIGN 101 Quiz</h1>
+        </div>
     {questions.map((question, questionIndex) => (
         <div key={questionIndex} className="question-container">
         <h3>Question {questionIndex + 1}: {question.query}</h3>

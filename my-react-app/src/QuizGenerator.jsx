@@ -5,7 +5,7 @@ import './QuizGenerator.css';
 function QuizGenerator() {
   const [topic, setTopic] = useState('Random');
   const [difficulty, setDifficulty] = useState('Beginner');
-  const [numQuestions, setNumQuestions] = useState(2);
+  const [numQuestions, setNumQuestions] = useState(5);
   const navigate = useNavigate();
 
   const topicsOptions = ['Random', 'HTML', 'CSS', 'JavaScript', 'React'];
@@ -69,14 +69,15 @@ function QuizGenerator() {
 
         {/* Number of Questions Selection */}
         <label>
-          # of Questions:
-          <select value={numQuestions} onChange={(e) => setNumQuestions(e.target.value)}>
-            {questionNumbers.map((number) => (
-              <option key={number} value={number}>
-                {number}
-              </option>
-            ))}
-          </select>
+          Questions: {numQuestions} {/* Display the current value next to the slider */}
+          <input 
+            type="range" 
+            min="5" 
+            max="20" 
+            value={numQuestions} 
+            onChange={(e) => setNumQuestions(e.target.value)}
+            className="slider" // You can style this class in your CSS
+          />
         </label>
 
         {/* Submit Button */}
