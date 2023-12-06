@@ -49,6 +49,23 @@ function QuizResults() {
         return submittedAnswers.hasOwnProperty(questionIndex);
     };
 
+    const calculateTestResult = () => {
+        const correct = Object.keys(submittedAnswers).reduce((acc, key) => {
+            return acc + (quizData.questions[key].answer === submittedAnswers[key] ? 1 : 0);
+        }, 0);
+        const done = questions.length;
+        const score = Math.round((correct / done) * 100);
+
+        return {
+            title: 'New Test',
+            correct: correct,
+            done: done,
+            score: score,
+            date: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
+            time: new Date().toLocaleTimeString() // Current time
+        };
+    };
+
     const parseStatsHtml = (statsHtml) => {
         // Helper function to extract numbers from a string
         const extractNumbers = (str) => str.match(/\d+/g).map(Number);
@@ -216,7 +233,7 @@ function QuizResults() {
 
     const downloadStatsHtml = () => {
         // fake and only used for testing
-        const newTestResult = {title: 'New Test', correct: 3, done: 5, score: 60, date: '2023-12-02', time: '11:30'};
+        const newTestResult = calculateTestResult();
         const statsHtml = generateStatsHtml(newTestResult);
         const blob = new Blob([statsHtml], { type: 'text/html' });
         const href = URL.createObjectURL(blob);
