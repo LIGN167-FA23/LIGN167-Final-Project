@@ -16,7 +16,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    max-width: 600px;
+    min-width: 600px;
     background-color: white; /* Dark blue background for the question */
     padding: 20px;
     border: 2px solid #706fd3; /* Modern border */
@@ -34,6 +34,12 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+.quiz-topic {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 20px;
 }
 
 label {
@@ -132,11 +138,13 @@ h2 {
 }
 
 .difficulty-squares {
-    display: flex;
+    display: flex; /* Align buttons in a row */
+    margin: 0 -1px; /* Overlap borders between buttons */
 }
 
 .difficulty-square {
-    margin: 5px;
+    margin: 0 0px; /* Remove space between buttons */
+    border-radius: 0; /* Remove rounded corners for middle buttons */
     padding: 10px;
     background-color: #ddd;
     color: #4b3f72; /* Dark purple text */
@@ -144,6 +152,16 @@ h2 {
     cursor: pointer;
     width: 50px; /* Fixed width for square appearance */
     text-align: center; /* Center text in the square */
+}
+
+.difficulty-square:first-child {
+    border-top-left-radius: 5px; /* Round the top-left corner */
+    border-bottom-left-radius: 5px; /* Round the bottom-left corner */
+}
+
+.difficulty-square:last-child {
+    border-top-right-radius: 5px; /* Round the top-right corner */
+    border-bottom-right-radius: 5px; /* Round the bottom-right corner */
 }
 
 .difficulty-square.selected {
@@ -236,4 +254,10 @@ h2 {
     border: 2px solid #706fd3; /* Modern border */
     /* Add a box-shadow for a more modern look, if desired */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.divider {
+    height: 1px; /* Height of the divider line */
+    background-color: #ccc; /* Color of the line */
+    margin: 20px 0; /* Spacing above and below the line */
 }

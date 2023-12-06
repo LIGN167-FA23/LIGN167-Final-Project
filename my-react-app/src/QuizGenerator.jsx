@@ -118,6 +118,7 @@ function QuizGenerator() {
 
             {/* Generate Topic Headers and Difficulty Squares */}
             <div className='conf'>Confidences</div>
+            <div className='quiz-topic'>
             {Array.from({ length: 8 }, (_, i) => `topic${i + 1}`).map((topic) => (
                 <div key={topic} className="topic-difficulty">
                 <div className="topic-container" onMouseEnter={() => setHoveredTopic(topic)} onMouseLeave={() => setHoveredTopic(null)}>
@@ -138,6 +139,9 @@ function QuizGenerator() {
                 </div>
                 </div>
             ))}
+            </div>
+
+            <div className="divider"></div>
 
             {/* Number of Questions Selection */}
             <label>
