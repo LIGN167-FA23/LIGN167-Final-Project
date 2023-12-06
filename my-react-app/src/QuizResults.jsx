@@ -5,7 +5,7 @@ import './QuizResults.css'
 function QuizResults() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { quizData, htmlContent } = location.state || { quizData: { questions: [] }, htmlContent: '' };
+    const { quizData, htmlContent, username, quizTitle } = location.state || { quizData: { questions: [] }, htmlContent: '', username: '', quizTitle: 'LIGN 101 QUIZ'};
     const questions = quizData.questions || [];
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [submittedAnswers, setSubmittedAnswers] = useState({});
@@ -249,7 +249,7 @@ function QuizResults() {
     return (
         <div className="quiz-results">
             <div className="score-container">
-                <h2>LIGN 101 Quiz</h2>
+                <h2>{quizTitle}</h2>
             </div>
         {questions.map((question, questionIndex) => (
             <div key={questionIndex} className="question-container">

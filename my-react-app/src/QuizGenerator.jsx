@@ -110,7 +110,7 @@ function QuizGenerator() {
         try {
             const response = await fetch(serverUrl, requestOptions);
             const data = await response.json();
-            navigate('/results', { state: { quizData: data, htmlContent: htmlContent } }); // Navigate to results page with quiz data and html
+            navigate('/results', { state: { quizData: data, htmlContent: htmlContent, username: username, quizTitle: quizTitle } }); // Navigate to results page with quiz data and html
         } catch (error) {
             console.error("Failed to fetch quiz data: ", error);
         } finally {
