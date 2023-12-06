@@ -4,8 +4,11 @@ import './QuizGenerator.css';
 
 function QuizGenerator() {
 
-    // idk why it's state 5, but it works
+    // starts at 5 questions
     const [numQuestions, setNumQuestions] = useState(5);
+
+    // transfers html to next page
+    const [htmlContent, setHtmlContent] = useState('');
 
     // dictionaries of topic counts
     const [difficulties, setDifficulties] = useState({
@@ -32,19 +35,20 @@ function QuizGenerator() {
 
     const [hoveredTopic, setHoveredTopic] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [username, setUsername] = useState('');
+    const [quizTitle, setQuizTitle] = useState('LIGN 101 QUIZ');
 
     // Function to handle file input change
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file && file.type === "text/html") {
             setUploadedFile(file);
-
             const reader = new FileReader();
-            reader.readAsText(file)
-            
-            reader.onload = function() {
-                console.log(reader.result)
-            }
+            reader.onload = function(event) {
+                setHtmlContent(event.target.result);
+            };
+            reader.readAsText(file);
         // You can add further handling here if needed
         } else {
         // Handle invalid file type
@@ -67,6 +71,7 @@ function QuizGenerator() {
     
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true); // Start loading
         const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001/generate-quiz';
 
         // Construct an object with each topic's difficulty
@@ -105,15 +110,41 @@ function QuizGenerator() {
         try {
             const response = await fetch(serverUrl, requestOptions);
             const data = await response.json();
-            navigate('/results', { state: { quizData: data } }); // Navigate to results page with quiz data
+            navigate('/results', { state: { quizData: data, htmlContent: htmlContent, username: username, quizTitle: quizTitle } }); // Navigate to results page with quiz data and html
         } catch (error) {
             console.error("Failed to fetch quiz data: ", error);
+        } finally {
+            setIsLoading(false); // Stop loading regardless of success or failure
         }
     };
 
     return (
         <div className="quiz-generator">
         <h1>LIGN 101 Quiz Generator</h1>
+        {/* Username Input */}
+        <label className="username-label">
+            Username:
+            <input 
+                type="text" 
+                value={username} 
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                className="username-input"
+            />
+        </label>
+
+        {/* Quiz Title Input */}
+        <label className="quiz-title-label">
+            Quiz Title:
+            <input 
+                type="text" 
+                value={quizTitle} 
+                onChange={(e) => setQuizTitle(e.target.value)}
+                placeholder="Enter quiz title"
+                className="quiz-title-input"
+            />
+        </label>
+
         <form onSubmit={handleSubmit} className='quiz-form'>
 
             {/* Generate Topic Headers and Difficulty Squares */}
@@ -158,7 +189,9 @@ function QuizGenerator() {
 
             {/* Submit Button */}
             <div className="button-container">
-                <button type="submit" className="generate-quiz-button">Generate Quiz</button>
+                <button type="submit" className="generate-quiz-button" disabled={isLoading}>
+                    {isLoading ? 'Loading...' : 'Generate Quiz'}
+                </button>
                 <label className="upload-button">
                     📁
                     <input 

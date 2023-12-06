@@ -106,3 +106,8 @@ h3 {
 .go-back-button:hover {
     background-color: #227093;
 }
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}

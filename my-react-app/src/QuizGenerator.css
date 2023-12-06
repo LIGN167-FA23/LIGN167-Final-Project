@@ -261,3 +261,17 @@ h2 {
     background-color: #ccc; /* Color of the line */
     margin: 20px 0; /* Spacing above and below the line */
 }
+
+.username-label, .quiz-title-label {
+    display: block;
+    margin: 10px 0;
+}
+
+.username-input, .quiz-title-input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
