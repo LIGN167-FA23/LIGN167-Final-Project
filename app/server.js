@@ -23,8 +23,6 @@ app.post('/generate-quiz-assistant', async (req, res) => {
   try{
     let {topics, numQuestions, threadID} = req.body;
 
-    // TODO: Retrieve list of topics to cover!
-    
     if(!threadID){
       console.debug("No thread provided in body, creating one.");
 
@@ -45,9 +43,13 @@ app.post('/generate-quiz-assistant', async (req, res) => {
 
     // Prepare the assistant run
 
-    const run = await openai.beta.threads.runs.create(
+    // ASSISTANTS:
+    // 3.5: asst_WmczkmNAhoGad6RnL37fQq28
+    // 4.0: asst_gZ83dwOH28G2qe4BLHMuUHwR
+
+    let run = await openai.beta.threads.runs.create(
       threadID,
-      {assistant_id: "asst_gZ83dwOH28G2qe4BLHMuUHwR"}
+      {assistant_id: "asst_WmczkmNAhoGad6RnL37fQq28"}
     );
     
     console.log("Run created, checking in progress");
@@ -56,48 +58,70 @@ app.post('/generate-quiz-assistant', async (req, res) => {
 
     // WE NEED TO PERIODICALLY CHECK THE THREAD
 
-    const MAX_CALLS = 10;
+    const MAX_CALLS = 20;
     let calls = 0;
 
-    const checkRun = async () => {
-      setTimeout(async () => {
-        console.log("Checking run.");
-        const runCheck = await openai.beta.threads.retrieve(
-          threadID,
-          run.id
+    const timer = ms => new Promise(res => setTimeout(res, ms));
+
+    while(calls++ != MAX_CALLS){
+      console.log("Checking run "+run.id+" with "+threadID);
+      console.log(run);
+      run = await openai.beta.threads.runs.retrieve(
+        threadID,
+        run.id
+      );
+      if(run.status == "requires_action"){
+        console.log("Run at function, breaking.")
+        break;
+      }
+      if(run.status == "completed"){
+        console.log("completed, breaking.")
+        console.log(run);
+
+        const messages = await openai.beta.threads.messages.list(
+          threadID
         );
 
-        if(runCheck.status != "completed"){
-          if(calls++ == MAX_CALLS) return false;
-          checkRun();
+        console.log(messages);
+        for(const message of messages.data){
+          console.log(message);
+          console.log(message.content);
         }
 
-        // Successfully found a completed status
-        return true;
-
-      }, 10000)
+        return;
+      }
+      await timer(10000);
     }
 
-    // I mean, ideally use Enums but whatever
-    const runSuccess = await checkRun();
+    console.log(run);
 
-    // This is wrong; we need to wait for the queue to get in.
+    const tools = run.required_action.submit_tool_outputs.tool_calls;
 
-    if(!runSuccess){
-      // The run failed, throw an error
-      console.error("The run hit max calls!");
-      return;
+    let response;
+
+    for(let tool of tools){
+      console.log(tool.function.arguments);
+      response = tool.function.arguments;
+      await openai.beta.threads.runs.submitToolOutputs(threadID,
+        run.id,
+        {
+          tool_outputs: [{
+            tool_call_id: tool.id,
+            output: "{success: true}"
+          }]
+        }
+      )
     }
 
-    console.log("Try to retrieve the message responses.")
+    //const messages = await openai.beta.threads.messages.list(
+    //  threadID
+    //);
 
-    const messages = await openai.beta.threads.messages.list(
-      threadID
-    );
+    //console.log(messages);
 
-    console.log(messages[0].content);
+    //console.log(messages[0].content);
 
-    res.send(messages[0].content);
+    res.send(response);
 
   }catch(error){
     console.error(error);
