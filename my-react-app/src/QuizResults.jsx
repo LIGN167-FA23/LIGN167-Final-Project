@@ -5,9 +5,8 @@ import './QuizResults.css'
 function QuizResults() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { quizData } = location.state || { quizData: { questions: [] } };
+    const { quizData, htmlContent } = location.state || { quizData: { questions: [] }, htmlContent: '' };
     const questions = quizData.questions || [];
-    const stats = htmlContent;
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [submittedAnswers, setSubmittedAnswers] = useState({});
     const [score, setScore] = useState(null);
@@ -48,11 +47,45 @@ function QuizResults() {
         return submittedAnswers.hasOwnProperty(questionIndex);
     };
 
+    const parseStatsHtml = (statsHtml) => {
+        // Helper function to extract numbers from a string
+        const extractNumbers = (str) => str.match(/\d+/g).map(Number);
+    
+        // Extracting categories data
+        const categoryRegex = /<div class="category-header">(.*?)<\/div>\s*<div class="stats">Correct\/Complete: (.*?)<\/div>/g;
+        const categories = [];
+        let categoryMatch;
+        while ((categoryMatch = categoryRegex.exec(statsHtml)) !== null) {
+            const [name, stats] = categoryMatch.slice(1);
+            const [correct, complete] = extractNumbers(stats);
+            const accuracyPercentage = Math.round((correct / complete) * 100);
+            categories.push({ name, correct, complete, accuracyPercentage });
+        }
+    
+        // Extracting test results data
+        const testResultRegex = /<div class="test-result-header">(.*?)<\/div>\s*<div class="result-details">Correct: (.*?)<\/div>\s*<div class="result-details">Score: (.*?)%<\/div>\s*<div class="result-details">Date: (.*?), Time: (.*?)<\/div>/g;
+        const testResults = [];
+        let testResultMatch;
+        while ((testResultMatch = testResultRegex.exec(statsHtml)) !== null) {
+            const [title, correctDone, score, date, time] = testResultMatch.slice(1);
+            const [correct, done] = extractNumbers(correctDone);
+            testResults.push({ title, correct, done, score: Number(score), date, time });
+        }
+    
+        return [categories, testResults];
+    };
+    
+
     // html generator
-    const generateStatsHtml = () => {
-        const categories = [{name:'topic1',correct:2,complete:3,accuracyPercentage:66}];
-        const testResults = [{title:'test1',correct:2,done:3,score:66,date:'2023-12-01',time:'10:30'}];
+    const generateStatsHtml = (newTestResult = null) => {
+        const stats = parseStatsHtml(htmlContent);
+        const categories = stats[0];
+        const testResults = stats[1];
         const hash = "1a79a4d60de6718e8e5b326e338ae533"; // This should be dynamically generated
+
+        if (newTestResult) {
+            testResults.unshift(newTestResult);
+        }
 
         const categoryHtml = categories.map(cat => `
             <div class="category">
@@ -180,7 +213,9 @@ function QuizResults() {
     };
 
     const downloadStatsHtml = () => {
-        const statsHtml = generateStatsHtml();
+        // fake and only used for testing
+        const newTestResult = {title: 'New Test', correct: 3, done: 5, score: 60, date: '2023-12-02', time: '11:30'};
+        const statsHtml = generateStatsHtml(newTestResult);
         const blob = new Blob([statsHtml], { type: 'text/html' });
         const href = URL.createObjectURL(blob);
         const link = document.createElement('a');
