@@ -17,6 +17,11 @@ body {
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     max-width: 600px;
+    background-color: white; /* Dark blue background for the question */
+    padding: 20px;
+    border: 2px solid #706fd3; /* Modern border */
+    /* Add a box-shadow for a more modern look, if desired */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     /* Remove margin auto if using flex to center */
 }
 
@@ -144,4 +149,91 @@ h2 {
 .difficulty-square.selected {
     background-color: #9b51e0;
     color: white;
+}
+
+.numQ {
+    margin-bottom: 10px;
+}
+
+.conf {
+    font-weight: bold;
+}
+
+.topic-container {
+    position: relative; /* This ensures that the description is positioned relative to the label */
+}
+
+.topic-description {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 150px; /* Adjust this value as needed */
+    max-width: 100%; /* To ensure it doesn't exceed the parent container */
+    padding: 10px;
+    background: #f7f7f7;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    color: #2c2c54;
+    z-index: 10;
+    word-wrap: break-word; /* This ensures text wraps inside the box */
+}
+  
+
+.topic-container:hover .topic-description {
+    display: block; /* Show the description when the container is hovered */
+}
+
+.form-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Adjust the gap between buttons */
+}
+
+/* ... existing styles ... */
+
+.button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Space between buttons */
+}
+
+.generate-quiz-button, .upload-button {
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    background-color: #9b51e0;
+    color: white;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.generate-quiz-button:hover, .upload-button:hover {
+    background-color: #8134af;
+}
+
+.upload-button {
+    width: 20px; /* Adjust as needed to make it square */
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Ensures no content overflows the square shape */
+}
+
+.upload-button input {
+    display: none;
+}
+
+.question-container {
+    background-color: white; /* Dark blue background for the question */
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    border: 2px solid #706fd3; /* Modern border */
+    /* Add a box-shadow for a more modern look, if desired */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

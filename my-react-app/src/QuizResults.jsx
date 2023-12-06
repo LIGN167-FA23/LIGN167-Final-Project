@@ -90,7 +90,7 @@ return (
         <h2>Your Score: {score} out of {quizData.questions.length}</h2>
       </div>
     )}
-    <button className="go-back-button" onClick={goBack}>Go Back to Quiz Generator</button>
+    <button onClick={goBack}>Go Back to Quiz Generator</button>
     </div>
 );
 }
