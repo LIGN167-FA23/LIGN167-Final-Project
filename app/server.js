@@ -4,7 +4,6 @@ const OpenAI = require('openai');
 const express = require('express');
 const bodyParser = require("body-parser");
 
-
 const app = express();
 
 app.use(express.json());
@@ -16,6 +15,94 @@ app.use(bodyParser.json());
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
+
+app.post('/generate-quiz-assistant', async (req, res) => {
+
+  console.log("quiz called!")
+
+  try{
+    let {topics, numQuestions, threadID} = req.body;
+
+    // TODO: Retrieve list of topics to cover!
+    
+    if(!threadID){
+      console.debug("No thread provided in body, creating one.");
+
+      let contentString = `Generate a quiz with ${numQuestions} questions from the provided files.`
+
+      const thread = await openai.beta.threads.create(
+        {
+          messages: [
+            {
+              "role": "user",
+              "content": contentString
+            }
+          ]
+        }
+      );
+      threadID = thread.id;
+    }
+
+    // Prepare the assistant run
+
+    const run = await openai.beta.threads.runs.create(
+      threadID,
+      {assistant_id: "asst_gZ83dwOH28G2qe4BLHMuUHwR"}
+    );
+    
+    console.log("Run created, checking in progress");
+
+    // Work with thread object:
+
+    // WE NEED TO PERIODICALLY CHECK THE THREAD
+
+    const MAX_CALLS = 10;
+    let calls = 0;
+
+    const checkRun = async () => {
+      setTimeout(async () => {
+        console.log("Checking run.");
+        const runCheck = await openai.beta.threads.retrieve(
+          threadID,
+          run.id
+        );
+
+        if(runCheck.status != "completed"){
+          if(calls++ == MAX_CALLS) return false;
+          checkRun();
+        }
+
+        // Successfully found a completed status
+        return true;
+
+      }, 10000)
+    }
+
+    // I mean, ideally use Enums but whatever
+    const runSuccess = await checkRun();
+
+    // This is wrong; we need to wait for the queue to get in.
+
+    if(!runSuccess){
+      // The run failed, throw an error
+      console.error("The run hit max calls!");
+      return;
+    }
+
+    console.log("Try to retrieve the message responses.")
+
+    const messages = await openai.beta.threads.messages.list(
+      threadID
+    );
+
+    console.log(messages[0].content);
+
+    res.send(messages[0].content);
+
+  }catch(error){
+    console.error(error);
+  }
+})
 
 app.post('/generate-quiz', async (req, res) => {
   try {
