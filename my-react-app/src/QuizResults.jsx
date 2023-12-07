@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './QuizResults.css'
+import CryptoJS from 'crypto-js'
 
 function QuizResults() {
     const location = useLocation();
@@ -113,6 +114,24 @@ function QuizResults() {
         return categoryResults;
     };
 
+    const makeHash = (htmlContent) => {
+        const testResultRegex = /<div class="test-result-header">(.*?)<\/div>\s*<div class="result-details">Correct: (.*?)<\/div>\s*<div class="result-details">Score: (.*?)%<\/div>\s*<div class="result-details">Date: (.*?), Time: (.*?)<\/div>/g;
+        const testResults = [];
+        const extractNumbers = (str) => str.match(/\d+/g).map(Number);
+        let testResultMatch;
+        while ((testResultMatch = testResultRegex.exec(htmlContent)) !== null) {
+            const [title, correctDone, score, date, time] = testResultMatch.slice(1);
+            const [correct, done] = extractNumbers(correctDone);
+            testResults.push({ title, correct, done, score: Number(score), date, time });
+        }
+        console.log(testResults)
+        // Recreate content string as in QuizResults to calculate hash
+        const contentToHash = `${JSON.stringify(testResults)}`; // Construct the content string
+        const calculatedHash = CryptoJS.SHA256(contentToHash).toString();
+        console.log(testResults)
+        return calculatedHash;
+    };
+
     // html generator
     const generateStatsHtml = (newTestResult = null) => {
         const initialCategories = [
@@ -129,15 +148,16 @@ function QuizResults() {
         const stats = parseStatsHtml(htmlContent);
         const parsedCategories = stats[0];
         const testResults = stats[1];
-        const hash = "1a79a4d60de6718e8e5b326e338ae533"; // This should be dynamically generated
+        
+        const contentToHash = `${JSON.stringify(testResults)}`;
+
+        const hash = CryptoJS.SHA256(contentToHash).toString();
 
         if (newTestResult) {
             testResults.unshift(newTestResult);
         }
 
         const newCategoryResults = calculateCategoryResults(questions, submittedAnswers);
-
-        console.log(newCategoryResults)
 
         // Update initial categories with new results
         initialCategories.forEach(cat => {
@@ -179,7 +199,7 @@ function QuizResults() {
             </div>
         `).join("");
 
-        return `
+        const outHtml = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -285,11 +305,13 @@ function QuizResults() {
                     <p class="name">${username}</p>
                     <div class="categories">${categoryHtml}</div>
                     <div class="test-results">${testResultHtml}</div>
-                    <div class="hash">Validation Hash: ${hash}</div>
+                    <div class="hash">Validation Hash:</div>
                 </div>
             </body>
             </html>
         `;
+        
+        return outHtml.replace('<div class="hash">Validation Hash:</div>', `<div class="hash">Validation Hash: ${makeHash(outHtml)}</div>`)
     };
 
     const downloadStatsHtml = () => {

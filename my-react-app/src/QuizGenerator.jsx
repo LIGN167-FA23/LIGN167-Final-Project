@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './QuizGenerator.css';
+import CryptoJS from 'crypto-js'
 
 function QuizGenerator() {
 
@@ -39,28 +40,56 @@ function QuizGenerator() {
     const [username, setUsername] = useState('');
     const [quizTitle, setQuizTitle] = useState('LIGN 101 QUIZ');
 
+    const validateHash = (htmlContent) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, "text/html");
+        const hashElement = doc.querySelector('.hash');
+        const extractedHash = hashElement ? hashElement.textContent.split(': ')[1] : '';    
+        const testResultRegex = /<div class="test-result-header">(.*?)<\/div>\s*<div class="result-details">Correct: (.*?)<\/div>\s*<div class="result-details">Score: (.*?)%<\/div>\s*<div class="result-details">Date: (.*?), Time: (.*?)<\/div>/g;
+        const testResults = [];
+        const extractNumbers = (str) => str.match(/\d+/g).map(Number);
+        let testResultMatch;
+        while ((testResultMatch = testResultRegex.exec(htmlContent)) !== null) {
+            const [title, correctDone, score, date, time] = testResultMatch.slice(1);
+            const [correct, done] = extractNumbers(correctDone);
+            testResults.push({ title, correct, done, score: Number(score), date, time });
+        }
+        console.log(testResults)
+        // Recreate content string as in QuizResults to calculate hash
+        const contentToHash = `${JSON.stringify(testResults)}`; // Construct the content string
+        const calculatedHash = CryptoJS.SHA256(contentToHash).toString();
+    
+        return extractedHash === calculatedHash;
+    };
+
     // Function to handle file input change
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file && file.type === "text/html") {
             setUploadedFile(file);
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const content = event.target.result;
-                setHtmlContent(content);
-    
-                const { username, categories } = parseHtmlContent(content);
-    
-                setUsername(username);
-    
-                const newDifficulties = { ...difficulties };
-                categories.forEach((category, index) => {
-                    const difficulty = Math.ceil(category.accuracyPercentage / 20);
-                    newDifficulties[`topic${index + 1}`] = difficulty;
-                });
-                setDifficulties(newDifficulties);
-            };
-            reader.readAsText(file);
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const content = event.target.result;
+                    const isValidHash = validateHash(content)
+                    if (isValidHash) {
+                        setHtmlContent(content);
+        
+                        const { username, categories } = parseHtmlContent(content);
+            
+                        setUsername(username);
+            
+                        const newDifficulties = { ...difficulties };
+                        categories.forEach((category, index) => {
+                            const difficulty = Math.max(Math.ceil(category.accuracyPercentage / 20), 1);
+                            newDifficulties[`topic${index + 1}`] = difficulty;
+                        });
+                        setDifficulties(newDifficulties);
+                    } else {
+                        alert("Invalid Hash")
+                    }
+                    
+                };
+                reader.readAsText(file);
         } else {
             alert("Please upload an HTML file.");
         }
