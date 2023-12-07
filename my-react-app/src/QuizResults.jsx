@@ -94,6 +94,24 @@ function QuizResults() {
         return [categories, testResults];
     };
     
+    const calculateCategoryResults = (questions, submittedAnswers) => {
+        // Initialize a map to hold category-wise results
+        const categoryResults = new Map();
+    
+        questions.forEach((question, index) => {
+            const category = question.category;
+            const isCorrect = question.answer === submittedAnswers[index];
+            const result = categoryResults.get(category) || { correct: 0, complete: 0 };
+    
+            // Increment correct and complete counts
+            result.complete += 1;
+            if (isCorrect) result.correct += 1;
+    
+            categoryResults.set(category, result);
+        });
+    
+        return categoryResults;
+    };
 
     // html generator
     const generateStatsHtml = (newTestResult = null) => {
@@ -117,6 +135,20 @@ function QuizResults() {
             testResults.unshift(newTestResult);
         }
 
+        const newCategoryResults = calculateCategoryResults(questions, submittedAnswers);
+
+        console.log(newCategoryResults)
+
+        // Update initial categories with new results
+        initialCategories.forEach(cat => {
+            const newResult = newCategoryResults.get(cat.name);
+            if (newResult) {
+                cat.correct += newResult.correct;
+                cat.complete += newResult.complete;
+                cat.accuracyPercentage = Math.round((cat.correct / cat.complete) * 100);
+            }
+        });
+
         parsedCategories.forEach(parsedCat => {
             const category = initialCategories.find(cat => cat.name === parsedCat.name);
             if (category) {
@@ -125,6 +157,8 @@ function QuizResults() {
                 category.accuracyPercentage = parsedCat.accuracyPercentage;
             }
         });
+
+        
 
         const categoryHtml = initialCategories.map(cat => `
         <div class="category">
@@ -325,7 +359,7 @@ function QuizResults() {
                         ? 'Correct!'
                         : 'Incorrect.'}
                     </p>
-                    <p className="explanation">Explanation: {question.explanation}</p>
+                    <p className="explanation">Explanation: {question.explanation}<br></br>Category: {question.category}</p>
                 </div>
             )}
             </div>

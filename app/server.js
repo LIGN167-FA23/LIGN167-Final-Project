@@ -16,7 +16,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-app.post('/generate-quiz', async (req, res) => {
+app.post('/generate-quiz-1', async (req, res) => {
 
   console.log("quiz called!")
 
@@ -168,7 +168,7 @@ app.post('/generate-quiz', async (req, res) => {
   }
 })
 
-app.post('/generate-quiz-1', async (req, res) => {
+app.post('/generate-quiz', async (req, res) => {
   try {
     const { topicsDifficulty, numQuestions } = req.body;
     const completion = await openai.chat.completions.create({
@@ -176,12 +176,23 @@ app.post('/generate-quiz-1', async (req, res) => {
       messages: [
         {
             role: "system",
-            content: `You are a helpful assistant. Create a ${numQuestions}-question quiz about Linguistics.
-            Return your answer entirely in the form of a JSON object. The JSON object should have a key named "questions" which is an array of questions.
-            Each question in the array should be an object with the properties "query" (the question text), "choices" (an array of choice texts),
+            content: `You are a helpful assistant. Create a ${numQuestions}-question quiz about the following 8 categories which are in the format "category":"confidence":"description" where confidence determines how often the categories should be picked with higher confidence meaning less of that category. If confidence is 5 you should rarely see questions from that category.
+            Intro Topics:${topicsDifficulty[0]}:Introductory Topics in linguistics cover the basics of language study. It includes understanding what linguistics is, differentiating language from other communication systems, examining language properties, and the distinction between prescriptive and descriptive grammatical approaches. It also explores the concept of arbitrariness in language signs, the Sapir-Whorf Hypothesis, and the fractal nature of language.
+            Phonetics:${topicsDifficulty[1]}:Phonetics is the study of speech sounds and their production. It involves understanding the International Phonetic Alphabet (IPA), speech organs like the lungs and tongue, and the distinction between consonants and vowels. Phonetics also covers the classification of sounds based on articulatory properties and voicing, and the difference between monophthongs and diphthongs.
+            Phonology:${topicsDifficulty[2]}:Phonology deals with the systematic organization of sounds in languages. It distinguishes between phonetics by focusing on the abstract aspects of sounds, like phonemes and allophones, and their distribution. Phonology involves understanding minimal pairs, phonological rules, natural classes of sounds, and phonotactic constraints.
+            Morphology:${topicsDifficulty[3]}:Morphology is the study of the structure of words and the smallest units of meaning - morphemes. It involves distinguishing between bound and free morphemes, understanding parts of speech, differentiating between derivational and inflectional morphology, and categorizing languages as isolating or synthetic based on their morphological structures.
+            Syntax:${topicsDifficulty[4]}:Syntax is the study of the structure of sentences, focusing on how words are arranged to convey meaning. It includes understanding concepts like constituency, syntactic hierarchy, phrase structure rules, recursion, and syntactic ambiguity. Syntax also explores how sentences can be represented through hierarchical structures like trees.
+            Semantics:${topicsDifficulty[5]}:Semantics is concerned with the meaning of words and sentences. It involves studying semantic entailment, different types of ambiguities, the difference between connotation and denotation, and the concept of semantic prototypes. Semantics also covers lexical semantics, including word sense and relationships between words like synonyms and antonyms.
+            Pragmatics:${topicsDifficulty[6]}:Pragmatics examines how context influences the interpretation of meaning in language. It covers the distinction between semantics and pragmatics, the cooperative principle of language, Gricean maxims, conversational implicature, and presuppositions. Pragmatics also explores speech acts, deixis, and the difference between conventional and performative sentences. 
+            Language Families:${topicsDifficulty[7]}:This topic explores how languages are related and classified into families. It involves understanding mutual intelligibility, dialect continuums, and the methods used for language reconstruction. The topic also covers the concept of linguistic isolates and the study of major language families, such as Indo-European.
+            Return your answer entirely in the form of a JSON object.
+            You should only generate questiosn from those 8 categories.
+            The JSON object should have a key named "questions" which is an array of questions.
+            Each question in the array should be an object with the properties "query" (the question text), "choices" (an array of choice texts), "category" (the name of the category it comes from)
             "answer" (the 0-indexed number of the correct choice), and "explanation" (a brief explanation of why the answer is correct).
             The choices should not be labeled with any ordinal values like A, B, C, D or numbers like 1, 2, 3, 4. 
-            Ensure the JSON is properly formatted and only includes these details.`
+            Ensure the JSON is properly formatted and only includes these details. 
+            `
         //   content: `You are a helpful assistant. Create a ${numQuestions}-question quiz about ${topic} for a ${difficulty} level.
         //   Return your answer entirely in the form of a JSON object. The JSON object should have a key named "questions" which is an array of questions.
         //   Each question in the array should be an object with the properties "query" (the question text), "choices" (an array of choice texts),
