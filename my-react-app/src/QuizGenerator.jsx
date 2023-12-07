@@ -46,13 +46,23 @@ function QuizGenerator() {
             setUploadedFile(file);
             const reader = new FileReader();
             reader.onload = function(event) {
-                setHtmlContent(event.target.result);
+                const content = event.target.result;
+                setHtmlContent(content);
+    
+                const { username, categories } = parseHtmlContent(content);
+    
+                setUsername(username);
+    
+                const newDifficulties = { ...difficulties };
+                categories.forEach((category, index) => {
+                    const difficulty = Math.ceil(category.accuracyPercentage / 20);
+                    newDifficulties[`topic${index + 1}`] = difficulty;
+                });
+                setDifficulties(newDifficulties);
             };
             reader.readAsText(file);
-        // You can add further handling here if needed
         } else {
-        // Handle invalid file type
-        alert("Please upload an HTML file.");
+            alert("Please upload an HTML file.");
         }
     };
 
@@ -124,6 +134,22 @@ function QuizGenerator() {
         'Pragmatics', 'Language Families'
     ];
 
+    const parseHtmlContent = (htmlContent) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+    
+        const username = doc.querySelector('.name')?.textContent;
+    
+        const categories = Array.from(doc.querySelectorAll('.category')).map(category => {
+            const name = category.querySelector('.category-header')?.textContent;
+            const accuracyIndicator = category.querySelector('.accuracy-indicator');
+            const accuracyPercentage = accuracyIndicator ? parseInt(accuracyIndicator.style.width) : 0;
+            return { name, accuracyPercentage };
+        });
+    
+        return { username, categories };
+    };
+
     return (
         <div className="quiz-generator">
         <h1>LIGN 101 Quiz Generator</h1>
@@ -136,6 +162,7 @@ function QuizGenerator() {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
                 className="username-input"
+                readOnly={!!uploadedFile}
             />
         </label>
 
