@@ -16,24 +16,41 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-app.post('/generate-quiz-assistant', async (req, res) => {
+app.post('/generate-quiz', async (req, res) => {
 
   console.log("quiz called!")
 
   try{
-    let {topics, numQuestions, threadID} = req.body;
+    let {topicsDifficulty, numQuestions, threadID} = req.body;
+
+    // TODO: FIX THIS
+    
+    topicString = `\nTo decide what categories to sample your questions from, select randomly from the following files.
+    The higher the number assigned to the file, the less questions you should include from that topic.\n`;
+
+    const topicNames = [
+      'file-0RsHwPdoiwe9GSDpJQPs7Hgv', 'file-ybY2QBDtbDVPzfkt79ojP2Oo', 'file-MMukvwryBIsYdWWiuqbLJls0', 
+      'file-isnne0m3lpgikcVcCvnyEc7E', 'file-E7PSonWaq58nOqfDVEWB0hj5', 'file-1cGmoA0KrEenDJ2TWNmA8HSC', 
+      'file-srSUCNUWtdgQOKJgzQcwvgtC', 'file-lW3qahaIzA7paAeSgde00lLT'
+    ];
+
+    for(let i = 0; i < 8; i++){
+      topicString+=topicNames[i]+": "+Object.values(topicsDifficulty)[i]+"\n";
+    }
+
+    console.log(topicString);
 
     if(!threadID){
       console.debug("No thread provided in body, creating one.");
 
-      let contentString = `Generate a quiz with ${numQuestions} questions from the provided files.`
+      topicString+=`Generate a quiz with ${numQuestions} questions from the provided files IDs.`;
 
       const thread = await openai.beta.threads.create(
         {
           messages: [
             {
               "role": "user",
-              "content": contentString
+              "content": topicString
             }
           ]
         }
@@ -74,6 +91,22 @@ app.post('/generate-quiz-assistant', async (req, res) => {
         console.log("Run at function, breaking.")
         break;
       }
+      if(run.status == "failed"){
+        console.log("FAILED!");
+        console.log(run);
+
+        const messages = await openai.beta.threads.messages.list(
+          threadID
+        );
+
+        console.log(messages);
+        for(const message of messages.data){
+          console.log(message);
+          console.log(message.content);
+        }
+
+        return;
+      }
       if(run.status == "completed"){
         console.log("completed, breaking.")
         console.log(run);
@@ -113,6 +146,14 @@ app.post('/generate-quiz-assistant', async (req, res) => {
       )
     }
 
+    const messages = await openai.beta.threads.messages.list(
+      threadID
+    );
+
+    for(const message of messages.data){
+      console.log(message.content);
+    }
+
     //const messages = await openai.beta.threads.messages.list(
     //  threadID
     //);
@@ -120,15 +161,14 @@ app.post('/generate-quiz-assistant', async (req, res) => {
     //console.log(messages);
 
     //console.log(messages[0].content);
-
+    
     res.send(response);
-
   }catch(error){
     console.error(error);
   }
 })
 
-app.post('/generate-quiz', async (req, res) => {
+app.post('/generate-quiz-1', async (req, res) => {
   try {
     const { topicsDifficulty, numQuestions } = req.body;
     const completion = await openai.chat.completions.create({
