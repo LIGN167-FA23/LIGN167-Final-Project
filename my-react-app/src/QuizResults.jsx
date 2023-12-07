@@ -5,7 +5,7 @@ import './QuizResults.css'
 function QuizResults() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { quizData, htmlContent, username, quizTitle } = location.state || { quizData: { questions: [] }, htmlContent: '', username: '', quizTitle: 'LIGN 101 QUIZ'};
+    const { quizData, htmlContent, username, quizTitle } = location.state || { quizData: { questions: [] }, htmlContent: '', username: 'GUEST', quizTitle: 'LIGN 101 QUIZ'};
     const questions = quizData.questions || [];
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [submittedAnswers, setSubmittedAnswers] = useState({});
@@ -97,8 +97,19 @@ function QuizResults() {
 
     // html generator
     const generateStatsHtml = (newTestResult = null) => {
+        const initialCategories = [
+            { name: 'Intro Topics', correct: 0, complete: 0, accuracyPercentage: 0 },
+            { name: 'Phonetics', correct: 0, complete: 0, accuracyPercentage: 0 },
+            { name: 'Phonology', correct: 0, complete: 0, accuracyPercentage: 0 },
+            { name: 'Morphology', correct: 0, complete: 0, accuracyPercentage: 0 },
+            { name: 'Syntax', correct: 0, complete: 0, accuracyPercentage: 0 },
+            { name: 'Semantics', correct: 0, complete: 0, accuracyPercentage: 0 },
+            { name: 'Pragmatics', correct: 0, complete: 0, accuracyPercentage: 0 },
+            { name: 'Language Families', correct: 0, complete: 0, accuracyPercentage: 0 }
+        ];
+
         const stats = parseStatsHtml(htmlContent);
-        const categories = stats[0];
+        const parsedCategories = stats[0];
         const testResults = stats[1];
         const hash = "1a79a4d60de6718e8e5b326e338ae533"; // This should be dynamically generated
 
@@ -106,10 +117,19 @@ function QuizResults() {
             testResults.unshift(newTestResult);
         }
 
-        const categoryHtml = categories.map(cat => `
-            <div class="category">
-                <div class="category-header">${cat.name}</div>
-                <div class="stats">Correct/Complete: ${cat.correct}/${cat.complete}</div>
+        parsedCategories.forEach(parsedCat => {
+            const category = initialCategories.find(cat => cat.name === parsedCat.name);
+            if (category) {
+                category.correct = parsedCat.correct;
+                category.complete = parsedCat.complete;
+                category.accuracyPercentage = parsedCat.accuracyPercentage;
+            }
+        });
+
+        const categoryHtml = initialCategories.map(cat => `
+        <div class="category">
+            <div class="category-header">${cat.name}</div>
+            <div class="stats">Correct/Complete: ${cat.correct}/${cat.complete}</div>
                 <div class="accuracy-bar">
                     <div class="accuracy-indicator" style="width: ${cat.accuracyPercentage}%;"></div>
                 </div>
