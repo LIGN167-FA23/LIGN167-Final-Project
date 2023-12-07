@@ -57,7 +57,7 @@ function QuizResults() {
         const score = Math.round((correct / done) * 100);
 
         return {
-            title: 'New Test',
+            title: quizTitle,
             correct: correct,
             done: done,
             score: score,
@@ -148,6 +148,12 @@ function QuizResults() {
                     font-size: 24px;
                     text-align: center;
                     color: #333;
+                    margin-bottom: 10px;
+                }
+                .name {
+                    font-size: 18px;
+                    text-align: center;
+                    color: #333;
                     margin-bottom: 20px;
                 }
                 .categories {
@@ -221,7 +227,8 @@ function QuizResults() {
             </head>
             <body>
                 <div class="container">
-                    <h1 class="header">Quiz Statistics</h1>
+                    <h1 class="header">LIGN 101 STATS</h1>
+                    <p class="name">${username}</p>
                     <div class="categories">${categoryHtml}</div>
                     <div class="test-results">${testResultHtml}</div>
                     <div class="hash">Validation Hash: ${hash}</div>
