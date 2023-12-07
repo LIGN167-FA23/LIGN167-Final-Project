@@ -255,16 +255,36 @@ function QuizResults() {
             <div key={questionIndex} className="question-container">
             <h3>Question {questionIndex + 1}: {question.query}</h3>
             <div className="options-container">
-                {question.choices.map((choice, choiceIndex) => (
-                <button
-                    key={choiceIndex}
-                    className={`option-button ${selectedAnswers[questionIndex] === choiceIndex ? 'selected' : ''}`}
-                    onClick={() => handleChoiceSelect(questionIndex, choiceIndex)}
-                    disabled={isAnswerSubmitted(questionIndex)}
-                >
-                    {choice}
-                </button>
-                ))}
+            {question.choices.map((choice, choiceIndex) => {
+                const isSelected = selectedAnswers[questionIndex] === choiceIndex;
+                const isCorrect = question.answer === choiceIndex;
+                const isSubmitted = isAnswerSubmitted(questionIndex);
+                let buttonClass = "option-button";
+
+                if (isSubmitted) {
+                    if (isSelected && isCorrect) {
+                        buttonClass += " option-correct"; // Correct answer
+                    } else if (isSelected && !isCorrect) {
+                        buttonClass += " option-incorrect"; // Incorrect answer
+                    } else if (!isSelected && isCorrect) {
+                        buttonClass += " option-correct"; // Highlight the correct answer even if not selected
+                    }
+                } else if (isSelected) {
+                    buttonClass += " selected";
+                }
+
+                return (
+                    <button
+                        key={choiceIndex}
+                        className={buttonClass}
+                        onClick={() => handleChoiceSelect(questionIndex, choiceIndex)}
+                        disabled={isSubmitted}
+                    >
+                        {choice}
+                    </button>
+                );
+            })}
+
             </div>
             {!isAnswerSubmitted(questionIndex) && (
                 <button onClick={() => handleSubmitAnswer(questionIndex)}>

@@ -54,6 +54,18 @@ h3 {
     border-color: #218c74; /* Darker teal border for selected */
 }
 
+.option-correct {
+    background-color: #2ed573; /* Green background for correct answer */
+    color: white;
+    border-color: #218c74; /* Darker green border for correct answer */
+}
+
+.option-incorrect {
+    background-color: #ff5252; /* Red background for incorrect answer */
+    color: white;
+    border-color: #b33939; /* Darker red border for incorrect answer */
+}
+
 .feedback-container {
     padding: 15px;
     margin-top: 10px;
