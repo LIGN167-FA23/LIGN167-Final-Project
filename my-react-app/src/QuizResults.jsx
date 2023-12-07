@@ -419,8 +419,10 @@ function QuizResults() {
                         : 'Incorrect.'}
                     </p>
                     <p className="explanation">Explanation: {question.explanation}<br></br>Category: {question.category}</p>
-                    <button onClick={() => regenerateExplanation(questionIndex, 'less')}>-</button>
-                    <button onClick={() => regenerateExplanation(questionIndex, 'more')}>+</button>
+                    <div>
+                        <button class="regen" onClick={() => regenerateExplanation(questionIndex, 'less')}>-</button>
+                        <button class="regen" onClick={() => regenerateExplanation(questionIndex, 'more')}>+</button>
+                    </div>
                 </div>
             )}
             </div>

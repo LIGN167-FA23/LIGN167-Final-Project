@@ -123,3 +123,25 @@ h3 {
     justify-content: space-between;
     margin-top: 20px;
 }
+
+.regen {
+    margin: 0 0px; /* Remove space between buttons */
+    border-radius: 0; /* Remove rounded corners for middle buttons */
+    padding: 10px;
+    background-color: #ddd;
+    color: #4b3f72; /* Dark purple text */
+    border: 1px solid #ccc;
+    cursor: pointer;
+    width: 50px; /* Fixed width for square appearance */
+    text-align: center; /* Center text in the square */
+}
+
+.regen:first-child {
+    border-top-left-radius: 5px; /* Round the top-left corner */
+    border-bottom-left-radius: 5px; /* Round the bottom-left corner */
+}
+
+.regen:last-child {
+    border-top-right-radius: 5px; /* Round the top-right corner */
+    border-bottom-right-radius: 5px; /* Round the bottom-right corner */
+}
