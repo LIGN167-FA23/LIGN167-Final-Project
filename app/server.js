@@ -16,34 +16,46 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-app.post('/generate-quiz-1', async (req, res) => {
+// Helper Functions
 
-  console.log("quiz called!")
+// Sets a timer for specified ms
+const timer = ms => new Promise(res => setTimeout(res, ms));
+
+// Dumps all messages in the thread
+const dumpMessages = async (threadID) => {
+  const messages = await openai.beta.threads.messages.list(
+    threadID
+  );
+
+  for(const message of messages.data){
+    console.dir(message, {depth: null});
+    console.dir(message.content, {depth: null});
+  }
+}
+
+app.post('/generate-quiz-assistant', async (req, res) => {
 
   try{
     let {topicsDifficulty, numQuestions, threadID} = req.body;
 
     // TODO: FIX THIS
-    
-    topicString = `\nTo decide what categories to sample your questions from, select randomly from the following files.
-    The higher the number assigned to the file, the less questions you should include from that topic.\n`;
-
-    const topicNames = [
-      'file-0RsHwPdoiwe9GSDpJQPs7Hgv', 'file-ybY2QBDtbDVPzfkt79ojP2Oo', 'file-MMukvwryBIsYdWWiuqbLJls0', 
-      'file-isnne0m3lpgikcVcCvnyEc7E', 'file-E7PSonWaq58nOqfDVEWB0hj5', 'file-1cGmoA0KrEenDJ2TWNmA8HSC', 
-      'file-srSUCNUWtdgQOKJgzQcwvgtC', 'file-lW3qahaIzA7paAeSgde00lLT'
-    ];
-
-    for(let i = 0; i < 8; i++){
-      topicString+=topicNames[i]+": "+Object.values(topicsDifficulty)[i]+"\n";
-    }
-
-    console.log(topicString);
 
     if(!threadID){
       console.debug("No thread provided in body, creating one.");
 
-      topicString+=`Generate a quiz with ${numQuestions} questions from the provided files IDs.`;
+      let topicString = "Generate a quiz with exactly "+numQuestions+" questions.";
+
+      topicString+="Only include questions from these categories:\n"
+
+      const topicNames = [
+        'Intro Topics', 'Phonetics', 'Phonology', 
+        'Morphology', 'Syntax', 'Semantics', 
+        'Pragmatics', 'Language Families'
+      ];
+  
+      for(let i = 0; i < 8; i++){
+        topicString+=topicNames[i]+" (Confidence: "+Object.values(topicsDifficulty)[i]+")\n";
+      }
 
       const thread = await openai.beta.threads.create(
         {
@@ -55,6 +67,7 @@ app.post('/generate-quiz-1', async (req, res) => {
           ]
         }
       );
+
       threadID = thread.id;
     }
 
@@ -66,105 +79,110 @@ app.post('/generate-quiz-1', async (req, res) => {
 
     let run = await openai.beta.threads.runs.create(
       threadID,
-      {assistant_id: "asst_WmczkmNAhoGad6RnL37fQq28"}
+      {assistant_id: "asst_gZ83dwOH28G2qe4BLHMuUHwR"}
     );
     
     console.log("Run created, checking in progress");
 
     // Work with thread object:
 
-    // WE NEED TO PERIODICALLY CHECK THE THREAD
+    // WE NEED TO PERIODICALLY CHECK THE RUN
+    // We call the run and check its status repeatedly
 
+    // Total attempts for calling
     const MAX_CALLS = 20;
-    let calls = 0;
+    // How long to delay before the next call (in ms)
+    const CALL_DELAY = 10000;
 
-    const timer = ms => new Promise(res => setTimeout(res, ms));
+    let calls = 0;
 
     while(calls++ != MAX_CALLS){
       console.log("Checking run "+run.id+" with "+threadID);
-      console.log(run);
       run = await openai.beta.threads.runs.retrieve(
         threadID,
         run.id
       );
+
+      console.log("Run has status: "+run.status);
+
+      // We received a function call, so we break and grab the parameters
       if(run.status == "requires_action"){
         console.log("Run at function, breaking.")
         break;
       }
+
       if(run.status == "failed"){
-        console.log("FAILED!");
-        console.log(run);
+        // This is bad.
+        console.log("Run failed!");
+        console.dir(run);
 
-        const messages = await openai.beta.threads.messages.list(
-          threadID
-        );
-
-        console.log(messages);
-        for(const message of messages.data){
-          console.log(message);
-          console.log(message.content);
-        }
+        dumpMessages(threadID);
 
         return;
       }
+
       if(run.status == "completed"){
-        console.log("completed, breaking.")
-        console.log(run);
+        // This shouldn't happen! We should always call the function.
+        console.log("Run completed! Call exited.")
+        console.dir(run);
 
-        const messages = await openai.beta.threads.messages.list(
-          threadID
-        );
-
-        console.log(messages);
-        for(const message of messages.data){
-          console.log(message);
-          console.log(message.content);
-        }
+        dumpMessages(threadID);
 
         return;
+
       }
-      await timer(10000);
+      // Check every CALL_DELAY ms
+      await timer(CALL_DELAY);
     }
 
+    // Log the run
     console.log(run);
 
+    // Get the 'tool_calls' (which should be the function)
     const tools = run.required_action.submit_tool_outputs.tool_calls;
 
+    let toolOutput = [];
     let response;
 
-    for(let tool of tools){
-      console.log(tool.function.arguments);
-      response = tool.function.arguments;
-      await openai.beta.threads.runs.submitToolOutputs(threadID,
-        run.id,
-        {
-          tool_outputs: [{
-            tool_call_id: tool.id,
-            output: "{success: true}"
-          }]
-        }
-      )
+    // We iterate through this but in reality we should only ever get one call
+    for(const tool of tools){
+      if(tool.type == "function"){
+        response = tool.function.arguments;
+        toolOutput.push({
+          "tool_call_id": tool.id,
+          "output": "{success: true}"
+        })
+      }else{
+        toolOutput.push({
+          "tool_call_id": tool.id,
+          "output": ""
+        })
+      }
     }
 
-    const messages = await openai.beta.threads.messages.list(
-      threadID
-    );
+    console.log("LOGGING THE RESPONSE\n---------------------------");
+    console.log(response);
+    console.log("DUMPING MESSAGES\n---------------------------");
+    dumpMessages(threadID);
 
-    for(const message of messages.data){
-      console.log(message.content);
-    }
 
-    //const messages = await openai.beta.threads.messages.list(
-    //  threadID
-    //);
-
-    //console.log(messages);
-
-    //console.log(messages[0].content);
-    
+    // Send the response: the parameters of the function call
     res.send(response);
+
+
+    // Let the function know how we did.
+    // Ideally, we should actually do this *after* we send the response!
+    await openai.beta.threads.runs.submitToolOutputs(threadID,
+      run.id,
+      {
+        tool_outputs: toolOutput
+      }
+    )
+
+
   }catch(error){
     console.error(error);
+    dumpMessages(threadID);
   }
 })
 
