@@ -107,7 +107,9 @@ button:hover {
 
 .topic-difficulty {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    margin-right: 20px;
 }
 
 h2 {

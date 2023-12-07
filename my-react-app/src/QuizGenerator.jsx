@@ -59,14 +59,14 @@ function QuizGenerator() {
 
     // Descriptions for each topic when hovering over title
     const topicDescriptions = {
-        topic1: "Description for Topic 1",
-        topic2: "Description for Topic 2",
-        topic3: "Description for Topic 3",
-        topic4: "Description for Topic 4",
-        topic5: "Description for Topic 5",
-        topic6: "Description for Topic 6",
-        topic7: "Description for Topic 7",
-        topic8: "Description for Topic 8"
+        topic1: "Basic concepts in linguistics, including the nature of language, its unique properties, and different grammatical approaches.",
+        topic2: "Study of speech sounds and their production using the International Phonetic Alphabet (IPA).",
+        topic3: "Analysis of sound patterns and the abstract elements of speech in languages.",
+        topic4: "Examination of word structures and the smallest units of meaning, morphemes.",
+        topic5: "Study of sentence structure and the arrangement of words to convey meaning.",
+        topic6: "Exploration of meaning in language, focusing on word and sentence interpretation.",
+        topic7: "Understanding language use in context, including implications and inferences.",
+        topic8: "Study of the relationships and classifications of languages into families."
     }
     
     const handleSubmit = async (event) => {
@@ -118,6 +118,12 @@ function QuizGenerator() {
         }
     };
 
+    const topicNames = [
+        'Intro Topics', 'Phonetics', 'Phonology', 
+        'Morphology', 'Syntax', 'Semantics', 
+        'Pragmatics', 'Language Families'
+    ];
+
     return (
         <div className="quiz-generator">
         <h1>LIGN 101 Quiz Generator</h1>
@@ -150,26 +156,26 @@ function QuizGenerator() {
             {/* Generate Topic Headers and Difficulty Squares */}
             <div className='conf'>Confidences</div>
             <div className='quiz-topic'>
-            {Array.from({ length: 8 }, (_, i) => `topic${i + 1}`).map((topic) => (
-                <div key={topic} className="topic-difficulty">
-                <div className="topic-container" onMouseEnter={() => setHoveredTopic(topic)} onMouseLeave={() => setHoveredTopic(null)}>
-                <label className="topic-label">{`Topic ${topic.slice(-1)}`}</label>
-                {hoveredTopic === topic && <div className="topic-description">{topicDescriptions[topic]}</div>}
-                </div>
-                <div className="difficulty-squares">
-                {Array.from({ length: 5 }, (_, i) => i + 1).map((difficulty) => (
-                    <button
-                    type="button"
-                    key={difficulty}
-                    className={`difficulty-square ${difficulties[topic] === difficulty ? 'selected' : ''}`}
-                    onClick={() => handleDifficultyChange(topic, difficulty)}
-                    >
-                    {difficulty}
-                    </button>
+                {topicNames.map((topicName, index) => (
+                    <div key={topicName} className="topic-difficulty">
+                        <div className="topic-container" onMouseEnter={() => setHoveredTopic(`topic${index + 1}`)} onMouseLeave={() => setHoveredTopic(null)}>
+                            <label className="topic-label">{topicName}</label>
+                            {hoveredTopic === `topic${index + 1}` && <div className="topic-description">{topicDescriptions[`topic${index + 1}`]}</div>}
+                        </div>
+                        <div className="difficulty-squares">
+                            {Array.from({ length: 5 }, (_, i) => i + 1).map((difficulty) => (
+                                <button
+                                    type="button"
+                                    key={difficulty}
+                                    className={`difficulty-square ${difficulties[`topic${index + 1}`] === difficulty ? 'selected' : ''}`}
+                                    onClick={() => handleDifficultyChange(`topic${index + 1}`, difficulty)}
+                                >
+                                    {difficulty}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 ))}
-                </div>
-                </div>
-            ))}
             </div>
 
             <div className="divider"></div>
