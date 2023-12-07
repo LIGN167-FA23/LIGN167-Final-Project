@@ -194,12 +194,6 @@ app.post('/generate-quiz', async (req, res) => {
             The choices should not be labeled with any ordinal values like A, B, C, D or numbers like 1, 2, 3, 4. 
             Ensure the JSON is properly formatted and only includes these details. 
             `
-        //   content: `You are a helpful assistant. Create a ${numQuestions}-question quiz about ${topic} for a ${difficulty} level.
-        //   Return your answer entirely in the form of a JSON object. The JSON object should have a key named "questions" which is an array of questions.
-        //   Each question in the array should be an object with the properties "query" (the question text), "choices" (an array of choice texts),
-        //   "answer" (the 0-indexed number of the correct choice), and "explanation" (a brief explanation of why the answer is correct).
-        //   The choices should not be labeled with any ordinal values like A, B, C, D or numbers like 1, 2, 3, 4. 
-        //   Ensure the JSON is properly formatted and only includes these details.`
         },
         { 
           role: "user", 
@@ -212,6 +206,29 @@ app.post('/generate-quiz', async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+});
+
+app.post('/generate-explanation', async (req, res) => {
+    try {
+        const { query, choices, answer } = req.body;
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4",
+            messages: [
+              {
+                  role: "system",
+                  content: `The question being asked is ${query} and the choices are ${choices}, and the answer is ${answer}. Come up with a very good explanation for the solution to this question. Return a json object with the format explanation:{explanation here}. Return only the json`
+              },
+              { 
+                role: "user", 
+                content: "Please generate the explanation." 
+              },
+            ]
+          });
+          res.send(completion.choices[0].message.content);
+        console.log(completion.choices[0].message.content)
+    } catch (error) {
+        res.status(500).send('Error generating new explanation');
+    }
 });
 
 const port = process.env.PORT || 3001;

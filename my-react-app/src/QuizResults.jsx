@@ -6,11 +6,14 @@ import CryptoJS from 'crypto-js'
 function QuizResults() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { quizData, htmlContent, username, quizTitle } = location.state || { quizData: { questions: [] }, htmlContent: '', username: 'GUEST', quizTitle: 'LIGN 101 QUIZ'};
+    const { htmlContent, username, quizTitle } = location.state || { htmlContent: '', username: 'GUEST', quizTitle: 'LIGN 101 QUIZ'};
+    const [quizData, setQuizData] = useState(location.state ? location.state.quizData : { questions: [] });
+
     const questions = quizData.questions || [];
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [submittedAnswers, setSubmittedAnswers] = useState({});
     const [score, setScore] = useState(null);
+    
 
     const handleChoiceSelect = (questionIndex, choiceIndex) => {
         setSelectedAnswers({
@@ -33,6 +36,38 @@ function QuizResults() {
         calculateScore(newSubmittedAnswers);
         }
     };
+
+    const regenerateExplanation = async (questionIndex) => {
+        try {
+            const question = questions[questionIndex];
+            // Prepare the data to send to the backend (modify as needed)
+            const requestData = {
+                query: question.query,
+                choices: question.choices,
+                answer: question.answer
+            };
+    
+            const response = await fetch('http://localhost:3001/generate-explanation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
+    
+            const data = await response.json();
+            if (data.explanation) {
+                // Update the explanation in the quizData state
+                let updatedQuizData = { ...quizData };
+                updatedQuizData.questions[questionIndex].explanation = data.explanation;
+                // Update the quizData state
+                setQuizData(updatedQuizData);
+            }
+        } catch (error) {
+            console.error('Error regenerating explanation:', error);
+        }
+    };
+    
 
     const calculateScore = (allSubmittedAnswers) => {
         let tally = 0;
@@ -334,7 +369,7 @@ function QuizResults() {
             <div className="score-container">
                 <h2>{quizTitle}</h2>
             </div>
-        {questions.map((question, questionIndex) => (
+        {quizData.questions.map((question, questionIndex) => (
             <div key={questionIndex} className="question-container">
             <h3>Question {questionIndex + 1}: {question.query}</h3>
             <div className="options-container">
@@ -382,6 +417,7 @@ function QuizResults() {
                         : 'Incorrect.'}
                     </p>
                     <p className="explanation">Explanation: {question.explanation}<br></br>Category: {question.category}</p>
+                    <button onClick={() => regenerateExplanation(questionIndex)}>Regenerate Explanation</button>
                 </div>
             )}
             </div>
