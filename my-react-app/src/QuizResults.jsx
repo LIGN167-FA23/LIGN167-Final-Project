@@ -37,14 +37,16 @@ function QuizResults() {
         }
     };
 
-    const regenerateExplanation = async (questionIndex) => {
+    const regenerateExplanation = async (questionIndex, depth) => {
         try {
             const question = questions[questionIndex];
             // Prepare the data to send to the backend (modify as needed)
             const requestData = {
                 query: question.query,
                 choices: question.choices,
-                answer: question.answer
+                answer: question.answer,
+                explanation: question.explanation,
+                depth: depth
             };
     
             const response = await fetch('http://localhost:3001/generate-explanation', {
@@ -417,7 +419,8 @@ function QuizResults() {
                         : 'Incorrect.'}
                     </p>
                     <p className="explanation">Explanation: {question.explanation}<br></br>Category: {question.category}</p>
-                    <button onClick={() => regenerateExplanation(questionIndex)}>Regenerate Explanation</button>
+                    <button onClick={() => regenerateExplanation(questionIndex, 'less')}>-</button>
+                    <button onClick={() => regenerateExplanation(questionIndex, 'more')}>+</button>
                 </div>
             )}
             </div>

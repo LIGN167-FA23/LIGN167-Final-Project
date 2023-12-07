@@ -194,7 +194,8 @@ app.post('/generate-quiz', async (req, res) => {
       messages: [
         {
             role: "system",
-            content: `You are a helpful assistant. Create a ${numQuestions}-question quiz from the following 8 categories which are in the format "category":"confidence":"description" where confidence determines how often the categories should be picked with higher confidence meaning less of that category. Confidence is on a scale of 1 to 5, and try to use the values of confidence for the proportion of questions since a high confidence means they don't need questions of that category. If I have all confidence 5 except one category of confidence 1, that category should be the only one you make questiosn from.
+            content: `You are a helpful assistant. Create a ${numQuestions}-question quiz from the following 8 categories which are in the format "category":"confidence":"description" where confidence determines how often the categories should be picked with higher confidence meaning less of that category. Confidence is on a scale of 1 to 5, and try to use the values of confidence for the proportion of questions since a high confidence means they don't need questions of that category. If I have all confidence 5 except one category of confidence 1, that category should be the only one you make questions from.
+            If any of the categories are a 5, you should only be using questions from that topic if the other categories are 5 or 4. Otherwise don't use them.
             Intro Topics:${topicsDifficulty['topic1']}:Introductory Topics in linguistics cover the basics of language study. It includes understanding what linguistics is, differentiating language from other communication systems, examining language properties, and the distinction between prescriptive and descriptive grammatical approaches. It also explores the concept of arbitrariness in language signs, the Sapir-Whorf Hypothesis, and the fractal nature of language.
             Phonetics:${topicsDifficulty['topic2']}:Phonetics is the study of speech sounds and their production. It involves understanding the International Phonetic Alphabet (IPA), speech organs like the lungs and tongue, and the distinction between consonants and vowels. Phonetics also covers the classification of sounds based on articulatory properties and voicing, and the difference between monophthongs and diphthongs.
             Phonology:${topicsDifficulty['topic3']}:Phonology deals with the systematic organization of sounds in languages. It distinguishes between phonetics by focusing on the abstract aspects of sounds, like phonemes and allophones, and their distribution. Phonology involves understanding minimal pairs, phonological rules, natural classes of sounds, and phonotactic constraints.
@@ -228,13 +229,13 @@ app.post('/generate-quiz', async (req, res) => {
 
 app.post('/generate-explanation', async (req, res) => {
     try {
-        const { query, choices, answer } = req.body;
+        const { query, choices, answer, description, depth} = req.body;
         const completion = await openai.chat.completions.create({
             model: "gpt-4",
             messages: [
               {
                   role: "system",
-                  content: `The question being asked is ${query} and the choices are ${choices}, and the answer is ${answer}. Come up with a very good explanation for the solution to this question. Return a json object with the format explanation:{explanation here}. Return only the json`
+                  content: `The question being asked is ${query} and the choices are ${choices}, and the answer is ${answer}. The current description is ${description}. This is not a suitable explanation and we need one that is ${depth} complex. Return a json object with the format explanation:{explanation here}. Return only the json`
               },
               { 
                 role: "user", 
