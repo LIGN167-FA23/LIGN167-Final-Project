@@ -16,12 +16,12 @@ To install the project, follow these steps:
 1. Clone this repository
 2. Install the dependencies for both the frontend and the backend folder:
 ```
-  cd frontend
-  npm install
+cd frontend
+npm install
 ```
 ```
-  cd backend
-  npm install
+cd backend
+npm install
 ```
 3. In the backend folder, create a `.env` file and add the following content:
 ```
@@ -34,8 +34,8 @@ To run the project after installation, follow these steps:
 
 1. Start the backend server:
 ```
-   cd backend
-   node server.js
+cd backend
+node server.js
 ```
-   This will start the server on `localhost:3001`. Navigate to port 3001 to view the application.
+This will start the server on `localhost:3001`. Navigate to port 3001 to view the application.
 
