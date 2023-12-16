@@ -5,7 +5,7 @@ A customizable quiz generator for LIGN 101.
 [Click Here to view the Demo](https://youtu.be/hIUpvhjKXDk)
 
 ## Link to the write-up:
-[Click Here to View the Write-Up](https://drive.google.com/file/d/1TKu2c9atuZjJLBF6tJ9JbSrRHTrKfYc_/view?usp=sharing)
+[Click Here to View the Write-Up](https://drive.google.com/file/d/13-w1mvMwAVZkw3zWIXdp17PshkB9BqCy/view?usp=sharing)
 
 ## Prerequisites
 
