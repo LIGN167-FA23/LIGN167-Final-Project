@@ -1,6 +1,8 @@
 # Adaptive Quiz for LIGN 101
 
 A customizable quiz generator for LIGN 101.
+## Link to the video:
+[Demo Video]([URL](https://youtu.be/hIUpvhjKXDk)
 
 ## Prerequisites
 
@@ -33,8 +35,5 @@ To run the project after installation, follow these steps:
    cd backend
    node server.js
    ```
-   This will start the server on `localhost:3001`.
-2. (Optional) Start the frontend application:
-   ```
-   npm run build
-   ```
+   This will start the server on `localhost:3001`. Navigate to port 3001 to view the application.
+
