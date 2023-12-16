@@ -2,7 +2,7 @@
 
 A customizable quiz generator for LIGN 101.
 ## Link to the video:
-[Demo Video]([URL](https://youtu.be/hIUpvhjKXDk)
+[Demo Video Can be Found Here](https://youtu.be/hIUpvhjKXDk)
 
 ## Prerequisites
 
